@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: July 31, 2018
+ * Released on: August 30, 2018
  */
 
 (function (global, factory) {
@@ -3350,6 +3350,7 @@
     }
     return {
       isIE: !!win.navigator.userAgent.match(/Trident/g) || !!win.navigator.userAgent.match(/MSIE/g),
+      isEdge: !!win.navigator.userAgent.match(/Edge/g),
       isSafari: isSafari(),
       isUiWebView: /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(win.navigator.userAgent),
     };
@@ -3387,7 +3388,7 @@
       suffixes.push('ios');
     }
     // WP8 Touch Events Fix
-    if (Browser.isIE && (Support.pointerEvents || Support.prefixedPointerEvents)) {
+    if ((Browser.isIE || Browser.isEdge) && (Support.pointerEvents || Support.prefixedPointerEvents)) {
       suffixes.push(("wp8-" + (params.direction)));
     }
 
@@ -4388,8 +4389,6 @@
         };
         Utils.extend(swiper.params, overwriteParams);
         Utils.extend(swiper.originalParams, overwriteParams);
-
-        swiper.virtual.update();
       },
       setTranslate: function setTranslate() {
         var swiper = this;
@@ -7700,6 +7699,180 @@
     },
   };
 
+  var Octagon = {
+    setTranslate: function setTranslate() {
+      var swiper = this;
+      var $wrapperEl = swiper.$wrapperEl;
+      var slides = swiper.slides;
+      var rtl = swiper.rtlTranslate;
+      var swiperSize = swiper.size;
+      // Swiper orientation
+      var isHorizontal = swiper.isHorizontal();
+      // Virtual slides
+      var isVirtual = swiper.virtual && swiper.params.virtual.enabled;
+      // Wrapper rotation
+      var wrapperRotate = 0;
+
+      // For each slide
+      for (var i = 0; i < slides.length; i += 1) {
+        // Slide element
+        var $slideEl = slides.eq(i);
+        // Slide index
+        var slideIndex = i;
+        // Check for virtual slide
+        if (isVirtual) {
+          slideIndex = parseInt($slideEl.attr('data-swiper-slide-index'), 10);
+        }
+        // Slide angle
+        var slideAngle = slideIndex * 360 / 8;
+        // Current round of slides
+        var round = Math.floor(slideAngle / 360);
+        // If right to left
+        if (rtl) {
+          slideAngle = -slideAngle;
+          round = Math.floor(-slideAngle / 360);
+        }
+        // Slider progress (between 1 and 0)
+        var progress = Math.max(Math.min($slideEl[0].progress, 1), -1);
+        // Translation factors
+        var tx = 0;
+        var ty = 0;
+        var tz = 0;
+
+        // Same default position for every slide
+        var originX = -((slideIndex % 8) * swiperSize + (swiperSize * 8 * round));
+        // Apothem = (sideLength / 2) * (1 / tan(PI / numberOfFaces))
+        var apothem = (swiperSize / 2) * (1 / Math.tan(Math.PI / 8));
+        var diagonalApothem = apothem / Math.sqrt(2);
+
+        if (slideIndex % 8 === 0) {
+          // Front slide(s)
+          tx = originX;
+          tz = apothem;
+        } else if (slideIndex % 8 === 1) {
+          // Front right slide(s)
+          tx = originX + diagonalApothem;
+          tz = diagonalApothem;
+        } else if (slideIndex % 8 === 2) {
+          // Right slide(s)
+          tx = originX + apothem;
+          tz = 0;
+        } else if (slideIndex % 8 === 3) {
+          // Back right slide(s)
+          tx = originX + diagonalApothem;
+          tz = -diagonalApothem;
+        } else if (slideIndex % 8 === 4) {
+          // Back slide(s)
+          tx = originX;
+          tz = -apothem;
+        } else if (slideIndex % 8 === 5) {
+          // Back left slide(s)
+          tx = originX - diagonalApothem;
+          tz = -diagonalApothem;
+        } else if (slideIndex % 8 === 6) {
+          // Left slide(s)
+          tx = originX - apothem;
+          tz = 0;
+        } else if (slideIndex % 8 === 7) {
+          // Front left slide(s)
+          tx = originX - diagonalApothem;
+          tz = diagonalApothem;
+        }
+
+        if (rtl) {
+          // Inverse X translation
+          tx = -tx;
+        }
+
+        // Vertical translation
+        if (!isHorizontal) {
+          ty = tx;
+          tx = 0;
+        }
+
+        // Apply slide transforms
+        var transform = "translate3d(" + tx + "px, " + ty + "px, " + tz + "px) rotateX(" + (isHorizontal ? 0 : -slideAngle) + "deg) rotateY(" + (isHorizontal ? slideAngle : 0) + "deg)";
+        // If progress is between -1 and 1
+        if (progress <= 1 && progress > -1) {
+          // Wrapper rotation in degres
+          wrapperRotate = (slideIndex * (360 / 8)) + (progress * (360 / 8));
+          if (rtl) { wrapperRotate = (-slideIndex * (360 / 8)) - (progress * (360 / 8)); }
+        }
+        // Slide transform origin
+        $slideEl.css({
+          '-webkit-transform-origin': '50% 50% 0px',
+          '-moz-transform-origin': '50% 50% 0px',
+          '-ms-transform-origin': '50% 50% 0px',
+          'transform-origin': '50% 50% 0px',
+        });
+        // Apply slide transform
+        $slideEl.transform(transform);
+      }
+      // Wrapper transform origin
+      $wrapperEl.css({
+        '-webkit-transform-origin': '50% 50% 0px',
+        '-moz-transform-origin': '50% 50% 0px',
+        '-ms-transform-origin': '50% 50% 0px',
+        'transform-origin': '50% 50% 0px',
+      });
+
+      // Apply wrapper transforms
+      $wrapperEl
+        .transform(("translate3d(0px,0px," + (-swiperSize) + "px) rotateX(" + (swiper.isHorizontal() ? 0 : wrapperRotate) + "deg) rotateY(" + (swiper.isHorizontal() ? -wrapperRotate : 0) + "deg)"));
+    },
+    // Slider transition
+    setTransition: function setTransition(duration) {
+      var swiper = this;
+      var slides = swiper.slides;
+      slides
+        .transition(duration);
+    },
+  };
+
+  var EffectOctagon = {
+    name: 'effect-octagon',
+    params: {},
+    create: function create() {
+      var swiper = this;
+      Utils.extend(swiper, {
+        octagonEffect: {
+          setTranslate: Octagon.setTranslate.bind(swiper),
+          setTransition: Octagon.setTransition.bind(swiper),
+        },
+      });
+    },
+    on: {
+      beforeInit: function beforeInit() {
+        var swiper = this;
+        if (swiper.params.effect !== 'octagon') { return; }
+        swiper.classNames.push(((swiper.params.containerModifierClass) + "octagon"));
+        swiper.classNames.push(((swiper.params.containerModifierClass) + "3d"));
+        var overwriteParams = {
+          slidesPerView: 1,
+          slidesPerColumn: 1,
+          slidesPerGroup: 1,
+          watchSlidesProgress: true,
+          resistanceRatio: 0,
+          spaceBetween: 0,
+          centeredSlides: false,
+          virtualTranslate: true,
+        };
+        Utils.extend(swiper.params, overwriteParams);
+        Utils.extend(swiper.originalParams, overwriteParams);
+      },
+      setTranslate: function setTranslate() {
+        var swiper = this;
+        if (swiper.params.effect !== 'octagon') { return; }
+        swiper.octagonEffect.setTranslate();
+      },
+      setTransition: function setTransition(duration) {
+        var swiper = this;
+        if (swiper.params.effect !== 'octagon') { return; }
+        swiper.octagonEffect.setTransition(duration);
+      },
+    },
+  };
+
   // Swiper Class
 
   var components = [
@@ -7725,7 +7898,8 @@
     EffectFade,
     EffectCube,
     EffectFlip,
-    EffectCoverflow
+    EffectCoverflow,
+    EffectOctagon
   ];
 
   if (typeof Swiper.use === 'undefined') {

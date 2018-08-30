@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Swiper demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+  <!-- Link Swiper's CSS -->
+  <link rel="stylesheet" href="../dist/css/swiper.css">
+
+  <!-- Demo styles -->
+  <style>
+    html, body {
+      position: relative;
+      height: 100%;
+    }
+    body {
+      background: #fff;
+      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      color:#000;
+      margin: 0;
+      padding: 0;
+    }
+    .swiper-container {
+      width: 300px;
+      height: 300px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      margin-left: -150px;
+      margin-top: -150px;
+    }
+    .swiper-slide {
+      background-position: center;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+  <!-- Swiper -->
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide" style="background-image:url(https://static.boredpanda.com/blog/wp-content/uploads/2017/09/funny-dog-thoughts-tweets-1.jpg)"></div>
+      <div class="swiper-slide" style="background-image:url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEQx9tRfvRqInFcBi99hLoRA0UakIq4kW5Na9gNifzVLfKaPFQ)"></div>
+      <div class="swiper-slide" style="background-image:url(https://s-i.huffpost.com/gen/1541850/images/o-ASHAMED-DOG-facebook.jpg)"></div>
+      <div class="swiper-slide" style="background-image:url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi2Fx2ZvDm543CfxjoUR_LhTa7suwVqnAN66FwhgU0bkDMSSpr)"></div>
+      <div class="swiper-slide" style="background-image:url(https://www.dfordog.co.uk/user/images/funnies/dog-selfies-03.jpg)"></div>
+    </div>
+    <!-- Add Pagination -->
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <!-- Swiper JS -->
+  <script src="../dist/js/swiper.js"></script>
+
+  <!-- Initialize Swiper -->
+  <script>
+    var swiper = new Swiper('.swiper-container', {
+      effect: 'octagon',
+      grabCursor: true,
+      loop: true,
+      spaceBetween: 50,
+      pagination: {
+        el: '.swiper-pagination',
+      },
+    });
+  </script>
+</body>
+</html>
