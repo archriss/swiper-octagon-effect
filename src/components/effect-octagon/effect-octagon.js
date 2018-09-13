@@ -13,6 +13,12 @@ const Octagon = {
     // Wrapper rotation
     let wrapperRotate = 0;
 
+    // Apothem = (sideLength / 2) * (1 / tan(PI / numberOfFaces))
+    const apothem = (swiperSize / 2) * (1 / Math.tan(Math.PI / 8));
+    const diagonalApothem = apothem / Math.sqrt(2);
+
+    console.log(apothem);
+
     // For each slide
     for (let i = 0; i < slides.length; i += 1) {
       // Slide element
@@ -41,9 +47,6 @@ const Octagon = {
 
       // Same default position for every slide
       const originX = -((slideIndex % 8) * swiperSize + (swiperSize * 8 * round));
-      // Apothem = (sideLength / 2) * (1 / tan(PI / numberOfFaces))
-      const apothem = (swiperSize / 2) * (1 / Math.tan(Math.PI / 8));
-      const diagonalApothem = apothem / Math.sqrt(2);
 
       if (slideIndex % 8 === 0) {
         // Front slide(s)
@@ -118,7 +121,7 @@ const Octagon = {
 
     // Apply wrapper transforms
     $wrapperEl
-      .transform(`translate3d(0px,0px,${-swiperSize}px) rotateX(${swiper.isHorizontal() ? 0 : wrapperRotate}deg) rotateY(${swiper.isHorizontal() ? -wrapperRotate : 0}deg)`);
+      .transform(`translate3d(0px,0px,${-apothem}px) rotateX(${swiper.isHorizontal() ? 0 : wrapperRotate}deg) rotateY(${swiper.isHorizontal() ? -wrapperRotate : 0}deg)`);
   },
   // Slider transition
   setTransition(duration) {
