@@ -17,8 +17,6 @@ const Octagon = {
     const apothem = (swiperSize / 2) * (1 / Math.tan(Math.PI / 8));
     const diagonalApothem = apothem / Math.sqrt(2);
 
-    console.log(apothem);
-
     // For each slide
     for (let i = 0; i < slides.length; i += 1) {
       // Slide element
