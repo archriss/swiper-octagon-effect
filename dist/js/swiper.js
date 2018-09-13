@@ -7717,8 +7717,6 @@
       var apothem = (swiperSize / 2) * (1 / Math.tan(Math.PI / 8));
       var diagonalApothem = apothem / Math.sqrt(2);
 
-      console.log(apothem);
-
       // For each slide
       for (var i = 0; i < slides.length; i += 1) {
         // Slide element
