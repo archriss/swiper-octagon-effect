@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: August 30, 2018
+ * Released on: September 13, 2018
  */
 
 (function (global, factory) {
@@ -90,7 +90,7 @@
   } : window; // eslint-disable-line
 
   /**
-   * Dom7 2.0.7
+   * Dom7 2.1.1
    * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
    * http://framework7.io/docs/dom.html
    *
@@ -100,7 +100,7 @@
    *
    * Licensed under MIT
    *
-   * Released on: June 14, 2018
+   * Released on: September 6, 2018
    */
 
   var Dom7 = function Dom7(arr) {
@@ -7713,6 +7713,12 @@
       // Wrapper rotation
       var wrapperRotate = 0;
 
+      // Apothem = (sideLength / 2) * (1 / tan(PI / numberOfFaces))
+      var apothem = (swiperSize / 2) * (1 / Math.tan(Math.PI / 8));
+      var diagonalApothem = apothem / Math.sqrt(2);
+
+      console.log(apothem);
+
       // For each slide
       for (var i = 0; i < slides.length; i += 1) {
         // Slide element
@@ -7741,9 +7747,6 @@
 
         // Same default position for every slide
         var originX = -((slideIndex % 8) * swiperSize + (swiperSize * 8 * round));
-        // Apothem = (sideLength / 2) * (1 / tan(PI / numberOfFaces))
-        var apothem = (swiperSize / 2) * (1 / Math.tan(Math.PI / 8));
-        var diagonalApothem = apothem / Math.sqrt(2);
 
         if (slideIndex % 8 === 0) {
           // Front slide(s)
@@ -7818,7 +7821,7 @@
 
       // Apply wrapper transforms
       $wrapperEl
-        .transform(("translate3d(0px,0px," + (-swiperSize) + "px) rotateX(" + (swiper.isHorizontal() ? 0 : wrapperRotate) + "deg) rotateY(" + (swiper.isHorizontal() ? -wrapperRotate : 0) + "deg)"));
+        .transform(("translate3d(0px,0px," + (-apothem) + "px) rotateX(" + (swiper.isHorizontal() ? 0 : wrapperRotate) + "deg) rotateY(" + (swiper.isHorizontal() ? -wrapperRotate : 0) + "deg)"));
     },
     // Slider transition
     setTransition: function setTransition(duration) {
